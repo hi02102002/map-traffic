@@ -9,7 +9,6 @@ export interface IMapContext {
     lnt: number;
   };
 }
-
 const MapContext = createContext<IMapContext>({
   map: null,
   location: {
@@ -17,14 +16,12 @@ const MapContext = createContext<IMapContext>({
     lnt: 106.660172,
   },
 });
-
 const MapProvider = () => {
   const [map, setMap] = useState<Map | null>(null);
   const [location, setLocation] = useState<IMapContext['location']>({
     lat: 10.762622,
     lnt: 106.660172,
   });
-
   useEffect(() => {
     const mapEl = document.querySelector('#map');
 
@@ -37,6 +34,7 @@ const MapProvider = () => {
         trafficIncidents: true,
         trafficFlow: true,
       },
+      // style: 'tomtom://vector/1/basic-main',
     });
     setMap(map);
     return () => {
@@ -72,7 +70,6 @@ const MapProvider = () => {
     </MapContext.Provider>
   );
 };
-
 export const useMap = () => useContext(MapContext);
 
 export default MapProvider;

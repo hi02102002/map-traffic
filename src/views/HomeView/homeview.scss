@@ -1,12 +1,12 @@
 .home-view {
-    min-height: 100vh;
-    &__map{
-        min-height: 50vh;
-    }
+  min-height: 100vh;
+  &__map {
+    min-height: 50vh;
+  }
 
-    @media screen and (min-width:768px) {
-        &__map{
-            min-height: 100vh;
-        }
+  @media screen and (min-width: 768px) {
+    &__map {
+      min-height: 100vh;
     }
+  }
 }

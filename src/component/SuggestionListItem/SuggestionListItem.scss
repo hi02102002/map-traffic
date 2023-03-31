@@ -1,0 +1,25 @@
+.suggestion-item {
+  border: none;
+  width: 100%;
+  padding: 8px 4px;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  &:hover {
+    opacity: 0.8;
+    cursor: pointer;
+    background-color: rgba(60, 64, 67, 0.04);
+    outline: none;
+  }
+
+  .suggestion-item__btn {
+    height: 100%;
+    white-space: normal;
+    display: flex;
+    flex-wrap: wrap;
+    text-align: unset;
+    &:hover {
+      background-color: transparent !important;
+    }
+  }
+}
