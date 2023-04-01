@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import tt from '@tomtom-international/web-sdk-maps';
 import { Input } from 'antd';
 
@@ -19,12 +19,9 @@ function Search({ type, placeholder }: Props) {
   const [showList, setShowList] = useState(false);
   const [suggestionListData, setSuggestionListData] = useState([]);
 
-  console.log(startPoint);
-  console.log(endPoint);
+  const [startMarker, setStartMarker] = useState<tt.Marker | null>(null);
+  const [endMarker, setEndMarker] = useState<tt.Marker | null>(null);
 
-  map?.on('click', (e) => {
-    console.log(e);
-  });
   const handleSearchTextChange = (value: string) => {
     if (!value || value.length < 5) {
       return;
@@ -61,19 +58,27 @@ function Search({ type, placeholder }: Props) {
       });
   };
   const onPressItem = (item: any) => {
+    if (startMarker) {
+      startMarker.remove();
+    }
+    if (endMarker) {
+      endMarker.remove();
+    }
     setValueStartInput(item.address);
-    const marker = new tt.Marker();
-    marker.setLngLat([item.lon, item.lat]).addTo(map as tt.Map);
     map?.flyTo({ center: [item.lon, item.lat], minZoom: 14, speed: 2 });
     setShowList(false);
-    console.log(marker.getLngLat());
     if (type === 'startpoint') {
-      setStartPoint(marker.getLngLat());
+      setStartPoint({ lng: item.lon, lat: item.lat });
+      const marker = new tt.Marker();
+      marker.setLngLat([item.lon, item.lat]).addTo(map as tt.Map);
+      setStartMarker(marker);
     } else {
-      setEndPoint(marker.getLngLat());
+      setEndPoint({ lng: item.lon, lat: item.lat });
+      const marker = new tt.Marker();
+      marker.setLngLat([item.lon, item.lat]).addTo(map as tt.Map);
+      setEndMarker(marker);
     }
   };
-
   return (
     <div className='search'>
       <div className='start-wrap wrap-style' style={{ position: 'relative' }}>
