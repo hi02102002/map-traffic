@@ -1,11 +1,11 @@
-import axios from 'axios';
-import { useState } from 'react';
 import tt from '@tomtom-international/web-sdk-maps';
 import { Input } from 'antd';
+import axios from 'axios';
+import { useState } from 'react';
 
 import { useMap } from '~/context/map.context';
-import Suggestion from '../Suggestion';
 import useLocation from '~/store/location';
+import Suggestion from '../Suggestion';
 import './Search.scss';
 interface Props {
   type: string;
@@ -13,7 +13,7 @@ interface Props {
 }
 
 function Search({ type, placeholder }: Props) {
-  const { map, location } = useMap();
+  const { map } = useMap();
   const { startPoint, endPoint, setStartPoint, setEndPoint } = useLocation();
   const [valueStartInput, setValueStartInput] = useState('');
   const [showList, setShowList] = useState(false);

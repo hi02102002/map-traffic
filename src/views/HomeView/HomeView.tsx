@@ -1,11 +1,12 @@
 import tt from '@tomtom-international/web-sdk-maps';
 import tts, { TravelMode } from '@tomtom-international/web-sdk-services';
-import { Col, Row } from 'antd';
+import { Col, Row, Space, Tabs } from 'antd';
 import { useEffect } from 'react';
-import { useMap } from '~/context/map.context';
-import './homeview.scss';
+import { CheckPunishment } from '~/component';
 import Search from '~/component/Search/Search';
+import { useMap } from '~/context/map.context';
 import useLocation from '~/store/location';
+import './homeview.scss';
 const HomeView = () => {
   const { map, location } = useMap();
   const { startPoint, endPoint } = useLocation();
@@ -25,51 +26,71 @@ const HomeView = () => {
       travelMode: '' as TravelMode,
     };
 
-    routeOptions.locations.push(startPoint);
-    routeOptions.locations.push(endPoint);
-    // console.log(map?.getLayer('route'));
-
-    tts.services.calculateRoute(routeOptions).then(function (routeData: any) {
-      console.log(routeData);
-      if (map?.getLayer('route')) {
-        map?.removeLayer('route');
-        map.removeSource('route');
-        map?.addLayer({
-          id: 'route',
-          type: 'line',
-          source: {
-            type: 'geojson',
-            data: routeData.toGeoJson(),
-          },
-          paint: {
-            'line-color': 'blue',
-            'line-width': 5,
-          },
-        });
-      } else {
-        map?.addLayer({
-          id: 'route',
-          type: 'line',
-          source: {
-            type: 'geojson',
-            data: routeData.toGeoJson(),
-          },
-          paint: {
-            'line-color': 'blue',
-            'line-width': 5,
-          },
-        });
-      }
-    });
+    tts.services
+      .calculateRoute(routeOptions)
+      .then(function (routeData: tts.CalculateRouteResponse) {
+        if (map?.getLayer('route')) {
+          map?.removeLayer('route');
+          map.removeSource('route');
+          map?.addLayer({
+            id: 'route',
+            type: 'line',
+            source: {
+              type: 'geojson',
+              data: routeData.toGeoJson(),
+            },
+            paint: {
+              'line-color': 'blue',
+              'line-width': 5,
+            },
+          });
+        } else {
+          map?.addLayer({
+            id: 'route',
+            type: 'line',
+            source: {
+              type: 'geojson',
+              data: routeData.toGeoJson(),
+            },
+            paint: {
+              'line-color': 'blue',
+              'line-width': 5,
+            },
+          });
+        }
+      });
   }, [startPoint, endPoint, map]);
   return (
     <div className='home-view'>
-      <Row gutter={[16, 16]}>
+      <Row>
         <Col xs={24} md={8}>
-          <div className='options'>
-            <Search type='startpoint' placeholder='Điểm bắt đầu' />
-            <Search type='endpoint' placeholder='Điểm kết thúc' />
-          </div>
+          <Space
+            direction='vertical'
+            style={{
+              width: '100%',
+              padding: 16,
+            }}
+          >
+            <Tabs
+              items={[
+                {
+                  key: '1',
+                  label: 'Tiềm kiếm tuyến đường',
+                  children: (
+                    <div className='options'>
+                      <Search type='startpoint' placeholder='Điểm bắt đầu' />
+                      <Search type='endpoint' placeholder='Điểm kết thúc' />
+                    </div>
+                  ),
+                },
+                {
+                  key: '2',
+                  label: 'Kiểm tra phạt nguội',
+                  children: <CheckPunishment />,
+                },
+              ]}
+            />
+          </Space>
         </Col>
         <Col xs={24} md={16}>
           <div id='map' className='home-view__map' />
