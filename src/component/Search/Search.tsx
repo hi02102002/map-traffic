@@ -19,12 +19,9 @@ function Search({ type, placeholder }: Props) {
   const [showList, setShowList] = useState(false);
   const [suggestionListData, setSuggestionListData] = useState([]);
 
-  console.log(startPoint);
-  console.log(endPoint);
+  const [startMarker, setStartMarker] = useState<tt.Marker | null>(null);
+  const [endMarker, setEndMarker] = useState<tt.Marker | null>(null);
 
-  map?.on('click', (e) => {
-    console.log(e);
-  });
   const handleSearchTextChange = (value: string) => {
     if (!value || value.length < 5) {
       return;
@@ -61,19 +58,31 @@ function Search({ type, placeholder }: Props) {
       });
   };
   const onPressItem = (item: any) => {
+    if (startMarker) {
+      startMarker.remove();
+    }
+    if (endMarker) {
+      endMarker.remove();
+    }
     setValueStartInput(item.address);
-    const marker = new tt.Marker();
-    marker.setLngLat([item.lon, item.lat]).addTo(map as tt.Map);
     map?.flyTo({ center: [item.lon, item.lat], minZoom: 14, speed: 2 });
     setShowList(false);
-    console.log(marker.getLngLat());
     if (type === 'startpoint') {
-      setStartPoint(marker.getLngLat());
+      // const customIconStart = document.createElement('div');
+      // customIconStart.className = 'marker-start-icon';
+      // customIconStart.style.backgroundImage =
+      // 'url(data:image/svg+xml;charset%3DUS-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20height%3D%2230%22%20viewBox%3D%220%200%2030%2030%22%20width%3D%2230%22%3E%3Cpath%20fill%3D%22%23fff%22%20d%3D%22M20.8%209.25l-14.2%203.8%207.6%202.9%202.9%207.6%22%2F%3E%3C%2Fsvg%3E)';
+      setStartPoint({ lng: item.lon, lat: item.lat });
+      const marker = new tt.Marker();
+      marker.setLngLat([item.lon, item.lat]).addTo(map as tt.Map);
+      setStartMarker(marker);
     } else {
-      setEndPoint(marker.getLngLat());
+      setEndPoint({ lng: item.lon, lat: item.lat });
+      const marker = new tt.Marker();
+      marker.setLngLat([item.lon, item.lat]).addTo(map as tt.Map);
+      setEndMarker(marker);
     }
   };
-
   return (
     <div className='search'>
       <div className='start-wrap wrap-style' style={{ position: 'relative' }}>
