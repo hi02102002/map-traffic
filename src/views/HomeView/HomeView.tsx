@@ -1,12 +1,13 @@
 import tt from '@tomtom-international/web-sdk-maps';
 import tts, { TravelMode } from '@tomtom-international/web-sdk-services';
-import { Col, Row, Select } from 'antd';
+import { Col, Row, Select, Space, Tabs } from 'antd';
 import { DownOutlined, StarOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
-import { useMap } from '~/context/map.context';
-import './homeview.scss';
+import { CheckPunishment } from '~/component';
 import Search from '~/component/Search/Search';
+import { useMap } from '~/context/map.context';
 import useLocation from '~/store/location';
+import './homeview.scss';
 import { Option } from 'antd/es/mentions';
 import { arrIcon } from '../../assets/icon';
 const HomeView = () => {
@@ -29,80 +30,73 @@ const HomeView = () => {
       locations: [],
       travelMode: `${travel}` as TravelMode,
     };
-
     routeOptions.locations.push(startPoint);
     routeOptions.locations.push(endPoint);
-
-    tts.services.calculateRoute(routeOptions).then(function (routeData: any) {
-      console.log(routeData);
-
-      if (map?.getLayer('route')) {
-        map?.removeLayer('route');
-        map.removeSource('route');
-        map?.addLayer({
-          id: 'route',
-          type: 'line',
-          source: {
-            type: 'geojson',
-            data: routeData.toGeoJson(),
-          },
-          paint: {
-            'line-color': 'blue',
-            'line-width': 5,
-          },
-        });
-      } else {
-        map?.addLayer({
-          id: 'route',
-          type: 'line',
-          source: {
-            type: 'geojson',
-            data: routeData.toGeoJson(),
-          },
-          paint: {
-            'line-color': 'blue',
-            'line-width': 5,
-          },
-        });
-      }
-    });
+    tts.services
+      .calculateRoute(routeOptions)
+      .then(function (routeData: tts.CalculateRouteResponse) {
+        if (map?.getLayer('route')) {
+          map?.removeLayer('route');
+          map.removeSource('route');
+          map?.addLayer({
+            id: 'route',
+            type: 'line',
+            source: {
+              type: 'geojson',
+              data: routeData.toGeoJson(),
+            },
+            paint: {
+              'line-color': 'blue',
+              'line-width': 5,
+            },
+          });
+        } else {
+          map?.addLayer({
+            id: 'route',
+            type: 'line',
+            source: {
+              type: 'geojson',
+              data: routeData.toGeoJson(),
+            },
+            paint: {
+              'line-color': 'blue',
+              'line-width': 5,
+            },
+          });
+        }
+      });
   }, [startPoint, endPoint, map, travel]);
-
-  function handeChangeTravel(value: string) {
-    setTravel(value);
-  }
   return (
     <div className='home-view'>
-      <Row gutter={[16, 16]}>
+      <Row>
         <Col xs={24} md={8}>
-          <div className='options'>
-            <div className='search'>
-              <Search type='startpoint' placeholder='Điểm bắt đầu' />
-              <Search type='endpoint' placeholder='Điểm kết thúc' />
-            </div>
-            <div className='travel-mode'>
-              <Select
-                style={{ width: 150, marginLeft: 40 }}
-                suffixIcon={<DownOutlined />}
-                optionLabelProp='label'
-                onChange={handeChangeTravel}
-                defaultValue='car'
-              >
-                {arrIcon.map((icon, index) => {
-                  return (
-                    <Option key={index.toString()} value={icon.type}>
-                      <div className='travel-mode-item' style={{ paddingRight: 10 }}>
-                        {icon.type.charAt(0).toUpperCase() + icon.type.slice(1)}
-                      </div>
-                      <div className='travel-mode-icon' style={{ width: 20, height: 20 }}>
-                        {icon.icon}
-                      </div>
-                    </Option>
-                  );
-                })}
-              </Select>
-            </div>
-          </div>
+          <Space
+            direction='vertical'
+            style={{
+              width: '100%',
+              padding: 16,
+            }}
+          >
+            <Tabs
+              items={[
+                {
+                  key: '1',
+                  label: 'Tiềm kiếm tuyến đường',
+                  children: (
+                    <div className='options'>
+                      <Search type='startpoint' placeholder='Điểm bắt đầu' />
+                      <Search type='endpoint' placeholder='Điểm kết thúc' />
+                    </div>
+                  ),
+                },
+                {
+                  key: '2',
+                  label: 'Kiểm tra phạt nguội',
+                  children: <CheckPunishment />,
+                },
+              ]}
+            />
+          </Space>
         </Col>
         <Col xs={24} md={16}>
           <div id='map' className='home-view__map' />
