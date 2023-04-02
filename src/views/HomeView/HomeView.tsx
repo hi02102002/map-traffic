@@ -66,11 +66,14 @@ const HomeView = () => {
               },
             });
           }
+          console.log(routeData);
 
-          const endPointofRoute = routeData.routes[0].sections[0].endPointIndex;
-          console.log(routeData.routes[0].legs[0].points[endPointofRoute - 3]);
+          // const startPointofRoute = routeData.routes[0].sections[0].endPointIndex;
+          const endPointofRoute = routeData.routes[0].sections[0].startPointIndex;
+          // console.log(endPointofRoute);
           new tt.Popup()
-            .setLngLat(routeData.routes[0].legs[0].points[endPointofRoute - 3])
+            // .setLngLat(routeData.routes[0].legs[0].points[startPointofRoute + 3])
+            .setLngLat(routeData.routes[0].legs[0].points[endPointofRoute + 3])
             .setHTML(
               '<div class="tt-pop-up-container">' +
                 '<div class="pop-up-content">' +
