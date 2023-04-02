@@ -1,21 +1,21 @@
+import { DownOutlined } from '@ant-design/icons';
 import tt from '@tomtom-international/web-sdk-maps';
 import tts, { TravelMode } from '@tomtom-international/web-sdk-services';
-import { Col, Row, Select, Space, Tabs, Typography } from 'antd';
-import { DownOutlined } from '@ant-design/icons';
-import { useEffect, useState } from 'react';
-import { useMap } from '~/context/map.context';
-import './homeview.scss';
-import Search from '~/component/Search/Search';
-import useLocation from '~/store/location';
+import { Col, Form, Row, Select, Space, Tabs, Typography } from 'antd';
 import { Option } from 'antd/es/mentions';
-import { arrIcon } from '../../assets/icon';
+import { useEffect, useState } from 'react';
 import { CheckPunishment } from '~/component';
+import NewSearch from '~/component/Search/NewSearch';
+import { useMap } from '~/context/map.context';
+import useLocation from '~/store/location';
+import { arrIcon } from '../../assets/icon';
+import './homeview.scss';
+const { Title } = Typography;
 
 const HomeView = () => {
   const { map, location } = useMap();
   const { startPoint, endPoint } = useLocation();
   const [travel, setTravel] = useState('car');
-  const { Title } = Typography;
   useEffect(() => {
     if (map) {
       const marker = new tt.Marker();
@@ -68,6 +68,7 @@ const HomeView = () => {
           }
 
           const endPointofRoute = routeData.routes[0].sections[0].endPointIndex;
+          console.log(routeData.routes[0].legs[0].points[endPointofRoute - 3]);
           new tt.Popup()
             .setLngLat(routeData.routes[0].legs[0].points[endPointofRoute - 3])
             .setHTML(
@@ -121,33 +122,37 @@ const HomeView = () => {
                   label: 'Tìm kiếm tuyến đường',
                   children: (
                     <div className='options'>
-                      <div className='search'>
-                        <Search type='startpoint' placeholder='Điểm bắt đầu' />
-                        <Search type='endpoint' placeholder='Điểm kết thúc' />
-                      </div>
-                      <div className='travel-mode' style={{ marginLeft: '12px' }}>
-                        <Title level={5}>Phương tiện di chuyển </Title>
-                        <Select
-                          style={{ width: 165 }}
-                          suffixIcon={<DownOutlined />}
-                          optionLabelProp='label'
-                          onChange={handeChangeTravel}
-                          defaultValue='car'
-                        >
-                          {arrIcon.map((icon, index) => {
-                            return (
-                              <Option key={index.toString()} value={icon.type}>
-                                <div className='travel-mode-item' style={{ paddingRight: 10 }}>
-                                  {icon.type.charAt(0).toUpperCase() + icon.type.slice(1)}
-                                </div>
-                                <div className='travel-mode-icon' style={{ width: 20, height: 20 }}>
-                                  {icon.icon}
-                                </div>
-                              </Option>
-                            );
-                          })}
-                        </Select>
-                      </div>
+                      <Form layout='vertical'>
+                        <NewSearch type='START' />
+                        <NewSearch type='END' />
+                        <Form.Item label='Chọn phương tiện'>
+                          <Select
+                            style={{ width: '100%' }}
+                            suffixIcon={<DownOutlined />}
+                            optionLabelProp='label'
+                            onChange={handeChangeTravel}
+                            defaultValue='car'
+                          >
+                            {arrIcon.map((icon, index) => {
+                              return (
+                                <Option key={index.toString()} value={icon.type}>
+                                  <Space align='center'>
+                                    <div className='travel-mode-item' style={{ paddingRight: 10 }}>
+                                      {icon.type.charAt(0).toUpperCase() + icon.type.slice(1)}
+                                    </div>
+                                    <div
+                                      className='travel-mode-icon'
+                                      style={{ width: 20, height: 20 }}
+                                    >
+                                      {icon.icon}
+                                    </div>
+                                  </Space>
+                                </Option>
+                              );
+                            })}
+                          </Select>
+                        </Form.Item>
+                      </Form>
                     </div>
                   ),
                 },
