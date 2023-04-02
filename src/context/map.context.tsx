@@ -85,8 +85,6 @@ const MapProvider = () => {
 
   useEffect(() => {
     map?.on('click', (e) => {
-      console.log(e.lngLat);
-
       const callParameters = {
         key: 'xuETmAIdAk4OlsACWCeSf8N0PMv79g6N',
         point: e.lngLat,
@@ -96,8 +94,6 @@ const MapProvider = () => {
       };
       tts.services.trafficFlowSegmentData(callParameters).then((respone) => {
         const points = respone.flowSegmentData?.coordinates?.coordinate;
-        console.log(points);
-        console.log(respone.flowSegmentData);
 
         if (map.getLayer('route1')) {
           map?.removeLayer('route1');

@@ -1,22 +1,21 @@
 import tt from '@tomtom-international/web-sdk-maps';
 import tts, { TravelMode } from '@tomtom-international/web-sdk-services';
-import { Col, Row, Select, Space, Tabs } from 'antd';
-import { DownOutlined, StarOutlined } from '@ant-design/icons';
+import { Col, Row, Select, Space, Tabs, Typography } from 'antd';
+import { DownOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
-import { CheckPunishment } from '~/component';
-import Search from '~/component/Search/Search';
 import { useMap } from '~/context/map.context';
-import useLocation from '~/store/location';
 import './homeview.scss';
+import Search from '~/component/Search/Search';
+import useLocation from '~/store/location';
 import { Option } from 'antd/es/mentions';
 import { arrIcon } from '../../assets/icon';
+import { CheckPunishment } from '~/component';
+
 const HomeView = () => {
   const { map, location } = useMap();
   const { startPoint, endPoint } = useLocation();
   const [travel, setTravel] = useState('car');
-  console.log(startPoint, endPoint);
-  console.log(Object.keys(startPoint).length > 0, Object.keys(endPoint).length > 0);
-
+  const { Title } = Typography;
   useEffect(() => {
     if (map) {
       const marker = new tt.Marker();
@@ -30,42 +29,80 @@ const HomeView = () => {
       locations: [],
       travelMode: `${travel}` as TravelMode,
     };
+
     routeOptions.locations.push(startPoint);
     routeOptions.locations.push(endPoint);
-    tts.services
-      .calculateRoute(routeOptions)
-      .then(function (routeData: tts.CalculateRouteResponse) {
-        if (map?.getLayer('route')) {
-          map?.removeLayer('route');
-          map.removeSource('route');
-          map?.addLayer({
-            id: 'route',
-            type: 'line',
-            source: {
-              type: 'geojson',
-              data: routeData.toGeoJson(),
-            },
-            paint: {
-              'line-color': 'blue',
-              'line-width': 5,
-            },
-          });
-        } else {
-          map?.addLayer({
-            id: 'route',
-            type: 'line',
-            source: {
-              type: 'geojson',
-              data: routeData.toGeoJson(),
-            },
-            paint: {
-              'line-color': 'blue',
-              'line-width': 5,
-            },
-          });
-        }
-      });
+
+    if (Object.keys(startPoint).length > 0 && Object.keys(endPoint).length > 0) {
+      tts.services
+        .calculateRoute(routeOptions)
+        .then(function (routeData: tts.CalculateRouteResponse) {
+          if (map?.getLayer('route')) {
+            map?.removeLayer('route');
+            map.removeSource('route');
+            map?.addLayer({
+              id: 'route',
+              type: 'line',
+              source: {
+                type: 'geojson',
+                data: routeData.toGeoJson(),
+              },
+              paint: {
+                'line-color': 'blue',
+                'line-width': 5,
+              },
+            });
+          } else {
+            map?.addLayer({
+              id: 'route',
+              type: 'line',
+              source: {
+                type: 'geojson',
+                data: routeData.toGeoJson(),
+              },
+              paint: {
+                'line-color': 'blue',
+                'line-width': 5,
+              },
+            });
+          }
+
+          const endPointofRoute = routeData.routes[0].sections[0].endPointIndex;
+          new tt.Popup()
+            .setLngLat(routeData.routes[0].legs[0].points[endPointofRoute - 3])
+            .setHTML(
+              '<div class="tt-pop-up-container">' +
+                '<div class="pop-up-content">' +
+                '<div>' +
+                '<div class="pop-up-result-header">' +
+                'Thông tin tuyến đường' +
+                '</div>' +
+                '<div class="pop-up-result-title road-length">Khoảng cách:    </div>' +
+                '<div class="pop-up-result-traffic -important road-length ">' +
+                (routeData.routes[0].summary.lengthInMeters / 1000).toFixed(1) +
+                '  km' +
+                '</div>' +
+                '</div>' +
+                '<div class="pop-up-result-title road-length">Thời gian di chuyển:</div>' +
+                '<div class="pop-up-result-traffic -important road-length">' +
+                Math.floor(routeData.routes[0].summary.travelTimeInSeconds / 60) +
+                ' m ' +
+                Math.floor(routeData.routes[0].summary.travelTimeInSeconds % 60) +
+                ' s ' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '</div>',
+            )
+            .addTo(map as tt.Map);
+        });
+    }
   }, [startPoint, endPoint, map, travel]);
+
+  function handeChangeTravel(value: string) {
+    setTravel(value);
+  }
   return (
     <div className='home-view'>
       <Row>
@@ -81,11 +118,36 @@ const HomeView = () => {
               items={[
                 {
                   key: '1',
-                  label: 'Tiềm kiếm tuyến đường',
+                  label: 'Tìm kiếm tuyến đường',
                   children: (
                     <div className='options'>
-                      <Search type='startpoint' placeholder='Điểm bắt đầu' />
-                      <Search type='endpoint' placeholder='Điểm kết thúc' />
+                      <div className='search'>
+                        <Search type='startpoint' placeholder='Điểm bắt đầu' />
+                        <Search type='endpoint' placeholder='Điểm kết thúc' />
+                      </div>
+                      <div className='travel-mode' style={{ marginLeft: '12px' }}>
+                        <Title level={5}>Phương tiện di chuyển </Title>
+                        <Select
+                          style={{ width: 165 }}
+                          suffixIcon={<DownOutlined />}
+                          optionLabelProp='label'
+                          onChange={handeChangeTravel}
+                          defaultValue='car'
+                        >
+                          {arrIcon.map((icon, index) => {
+                            return (
+                              <Option key={index.toString()} value={icon.type}>
+                                <div className='travel-mode-item' style={{ paddingRight: 10 }}>
+                                  {icon.type.charAt(0).toUpperCase() + icon.type.slice(1)}
+                                </div>
+                                <div className='travel-mode-icon' style={{ width: 20, height: 20 }}>
+                                  {icon.icon}
+                                </div>
+                              </Option>
+                            );
+                          })}
+                        </Select>
+                      </div>
                     </div>
                   ),
                 },
