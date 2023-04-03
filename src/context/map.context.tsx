@@ -23,12 +23,27 @@ const MapProvider = () => {
     lat: 10.762622,
     lnt: 106.660172,
   });
+  // const [bbox, setBbox] = useState(null);
 
+  // useEffect(() => {
+  //   map?.on('move', () => {
+  //     tts.services
+  //       .incidentDetailsV5({
+  //         key: 'ZOGy21WlSKlvwZ8eMPodv71OESuHIerH',
+  //         boundingBox: map?.getBounds(),
+  //         fields:
+  //           '{\n            incidents {\n                type,\n                geometry {\n                    type,\n                    coordinates\n                },\n                properties {\n                    id,\n                    iconCategory,\n                    magnitudeOfDelay,\n                    events {\n                        description,\n                        code,\n                        iconCategory\n                    },\n                    startTime,\n                    endTime,\n                    from,\n                    to,\n                    length,\n                    delay,\n                    roadNumbers,\n                    aci {\n                        probabilityOfOccurrence,\n                        numberOfReports,\n                        lastReportTime\n                    }\n                }\n            }\n        }',
+  //       })
+  //       .then((data) => {
+  //         console.log(data);
+  //       });
+  //   });
+  // });
   useEffect(() => {
     const mapEl = document.querySelector('#map');
-
+    const TRAFFIC_INCIDENTS_STYLE = 's0';
     const map = tt.map({
-      key: 'xuETmAIdAk4OlsACWCeSf8N0PMv79g6N',
+      key: 'ZOGy21WlSKlvwZ8eMPodv71OESuHIerH',
       container: mapEl as HTMLElement,
       center: [location.lnt, location.lat],
       zoom: 16,
@@ -37,12 +52,18 @@ const MapProvider = () => {
         trafficFlow: true,
       },
       pitch: 60,
+      style:
+        'https://api.tomtom.com/style/1/style/21.1.0-*?map=basic_main&traffic_incidents=incidents_' +
+        TRAFFIC_INCIDENTS_STYLE +
+        '&poi=poi_main',
     });
     map.addControl(new tt.FullscreenControl());
     map.addControl(new tt.NavigationControl());
     setMap(map);
+    const myLatLng = new tt.LngLat(location.lnt, location.lat);
+
     new tt.Popup()
-      .setLngLat([location.lnt, location.lat])
+      .setLngLat(myLatLng)
       .setHTML(
         '<div class="tt-pop-up-container">' +
           '<div class="pop-up-content">' +
@@ -79,21 +100,29 @@ const MapProvider = () => {
     FRC4: 'Đường nối địa phương',
     FRC5: 'Đường địa phương quan trọng',
     FRC6: 'Đường địa phương',
-    FRC7: 'Đường địa phương không quan trọng',
-    FRC8: 'Đường khác',
   };
 
   useEffect(() => {
     map?.on('click', (e) => {
+      const point = e.lngLat.toString();
       const callParameters = {
-        key: 'xuETmAIdAk4OlsACWCeSf8N0PMv79g6N',
-        point: e.lngLat,
-        style: 'relative0',
-        unit: 'KMPH',
+        key: 'ZOGy21WlSKlvwZ8eMPodv71OESuHIerH',
+        point: point,
+        style: 'relative0' as any,
+        unit: 'KMPH' as any,
         zoom: Math.floor(map.getZoom()),
       };
       tts.services.trafficFlowSegmentData(callParameters).then((respone) => {
-        const points = respone.flowSegmentData?.coordinates?.coordinate;
+        let points: any[] = [];
+
+        if (
+          respone.flowSegmentData &&
+          respone.flowSegmentData.coordinates &&
+          respone.flowSegmentData.coordinates.coordinate
+        ) {
+          points = respone.flowSegmentData.coordinates.coordinate;
+        }
+        console.log(points);
 
         if (map.getLayer('route1')) {
           map?.removeLayer('route1');
@@ -107,10 +136,11 @@ const MapProvider = () => {
                 type: 'Feature',
                 geometry: {
                   type: 'LineString',
-                  coordinates: points?.map((point) => {
+                  coordinates: points.map((point) => {
                     return [point.lng, point.lat];
                   }),
                 },
+                properties: {},
               },
             },
             layout: {
@@ -135,6 +165,7 @@ const MapProvider = () => {
                     return [point.lng, point.lat];
                   }),
                 },
+                properties: {},
               },
             },
             layout: {
@@ -146,6 +177,21 @@ const MapProvider = () => {
             },
           });
         }
+
+        let typeRoad: keyof typeof roadType = 'FRC0';
+        let travelTime = 0;
+        let travelTimeWOTraffic = 0;
+        if (respone.flowSegmentData && respone.flowSegmentData.frc) {
+          typeRoad = respone.flowSegmentData.frc;
+        }
+        if (respone.flowSegmentData && respone.flowSegmentData.currentTravelTime) {
+          travelTime = respone.flowSegmentData?.currentTravelTime;
+        }
+
+        if (respone.flowSegmentData && respone.flowSegmentData.freeFlowTravelTime) {
+          travelTimeWOTraffic = respone.flowSegmentData.freeFlowTravelTime;
+        }
+
         new tt.Popup()
           .setLngLat(e.lngLat)
           .setHTML(
@@ -153,7 +199,7 @@ const MapProvider = () => {
               '<div class="pop-up-content">' +
               '<div>' +
               '<div class="pop-up-result-header">' +
-              roadType[respone.flowSegmentData?.frc] +
+              roadType[typeRoad] +
               '</div>' +
               '<div class="pop-up-result-title">Tốc độ trung bình:</div>' +
               '<div class="pop-up-result-traffic -important">Có giao thông: ' +
@@ -166,15 +212,15 @@ const MapProvider = () => {
               '</div>' +
               '<div class="pop-up-result-title">Thời gian di chuyển:</div>' +
               '<div class="pop-up-result-traffic -important">Có giao thông: ' +
-              Math.floor(respone.flowSegmentData?.currentTravelTime / 60) +
+              Math.floor(travelTime / 60) +
               ' m ' +
-              (respone.flowSegmentData?.currentTravelTime % 60) +
+              (travelTime % 60) +
               ' s ' +
               '</div>' +
               '<div class="pop-up-result-traffic">Không có giao thông: ' +
-              Math.floor(respone.flowSegmentData?.freeFlowTravelTime / 60) +
+              Math.floor(travelTimeWOTraffic / 60) +
               ' m ' +
-              (respone.flowSegmentData?.freeFlowTravelTime % 60) +
+              (travelTimeWOTraffic % 60) +
               ' s ' +
               '</div>' +
               '</div>' +
@@ -202,6 +248,7 @@ const MapProvider = () => {
       });
     });
   });
+
   return (
     <MapContext.Provider
       value={{

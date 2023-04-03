@@ -1,8 +1,12 @@
 import { EnvironmentOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import './SuggestionListItem.scss';
+
+interface data {
+  address: string;
+}
 interface Props {
-  data: any;
+  data: data;
   onPressItem: (item: any) => void;
 }
 
