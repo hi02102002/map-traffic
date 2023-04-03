@@ -10,3 +10,46 @@
     }
   }
 }
+
+.pop-up-result-header {
+  border-bottom: 1px solid #f2f2f2;
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 0;
+  padding-bottom: 12px;
+}
+.pop-up-result-title {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 0;
+  padding: 16px 0 5px 0;
+}
+
+.pop-up-result-title.road-length {
+  display: inline-block;
+  margin-right: 4px;
+}
+
+.pop-up-result-traffic.-important.road-length {
+  display: inline-block;
+}
+
+.pop-up-result-traffic {
+  font-family: Noway, Gotham, Helvetica;
+  font-size: 14px;
+}
+
+.pop-up-result-traffic.-important {
+  color: #b1110e;
+}
+
+//select icon
+.ant-select-item-option-content {
+  display: flex;
+  align-items: center;
+}
+.marker-start-icon {
+  background-size: 20px 20px;
+  height: 20px;
+  width: 20px;
+}
