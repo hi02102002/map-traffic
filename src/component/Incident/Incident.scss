@@ -1,0 +1,21 @@
+.incident-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 40px;
+
+  .incident-header-title {
+    font-weight: 500;
+  }
+}
+
+.incident-list {
+  height: 636px;
+  overflow-y: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
