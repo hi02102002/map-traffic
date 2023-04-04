@@ -1,0 +1,27 @@
+.check-punishment {
+  &-select {
+    min-width: 8rem;
+  }
+
+  &-btn {
+    width: 100%;
+  }
+
+  .form-button {
+    margin: 0;
+    flex: 1;
+  }
+
+  .result {
+    margin-top: 1rem;
+  }
+
+  .result img,
+  .result .css-tt.submit,
+  br {
+    display: none;
+  }
+  .result center + center {
+    display: none;
+  }
+}
