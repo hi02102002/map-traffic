@@ -23,25 +23,9 @@ const MapProvider = () => {
     lat: 10.762622,
     lnt: 106.660172,
   });
-  // const [bbox, setBbox] = useState(null);
 
-  // useEffect(() => {
-  //   map?.on('move', () => {
-  //     tts.services
-  //       .incidentDetailsV5({
-  //         key: 'ZOGy21WlSKlvwZ8eMPodv71OESuHIerH',
-  //         boundingBox: map?.getBounds(),
-  //         fields:
-  //           '{\n            incidents {\n                type,\n                geometry {\n                    type,\n                    coordinates\n                },\n                properties {\n                    id,\n                    iconCategory,\n                    magnitudeOfDelay,\n                    events {\n                        description,\n                        code,\n                        iconCategory\n                    },\n                    startTime,\n                    endTime,\n                    from,\n                    to,\n                    length,\n                    delay,\n                    roadNumbers,\n                    aci {\n                        probabilityOfOccurrence,\n                        numberOfReports,\n                        lastReportTime\n                    }\n                }\n            }\n        }',
-  //       })
-  //       .then((data) => {
-  //         console.log(data);
-  //       });
-  //   });
-  // });
   useEffect(() => {
     const mapEl = document.querySelector('#map');
-    const TRAFFIC_INCIDENTS_STYLE = 's0';
     const map = tt.map({
       key: 'ZOGy21WlSKlvwZ8eMPodv71OESuHIerH',
       container: mapEl as HTMLElement,
@@ -52,10 +36,10 @@ const MapProvider = () => {
         trafficFlow: true,
       },
       pitch: 60,
-      style:
-        'https://api.tomtom.com/style/1/style/21.1.0-*?map=basic_main&traffic_incidents=incidents_' +
-        TRAFFIC_INCIDENTS_STYLE +
-        '&poi=poi_main',
+      // style:
+      //   'https://api.tomtom.com/style/1/style/21.1.0-*?map=basic_main&traffic_incidents=incidents_' +
+      //   TRAFFIC_INCIDENTS_STYLE +
+      //   '&poi=poi_main',
     });
     map.addControl(new tt.FullscreenControl());
     map.addControl(new tt.NavigationControl());
@@ -100,6 +84,8 @@ const MapProvider = () => {
     FRC4: 'Đường nối địa phương',
     FRC5: 'Đường địa phương quan trọng',
     FRC6: 'Đường địa phương',
+    FRC7: 'Đường địa phương không quan trọng',
+    FRC8: 'Đường khác',
   };
 
   useEffect(() => {

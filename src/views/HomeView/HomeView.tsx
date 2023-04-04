@@ -10,6 +10,7 @@ import { useMap } from '~/context/map.context';
 import useLocation from '~/store/location';
 import { arrIcon } from '../../assets/icon';
 import './homeview.scss';
+import Incident from '~/component/Incident/Incident';
 
 const HomeView = () => {
   const { map, location } = useMap();
@@ -173,8 +174,8 @@ const HomeView = () => {
                 },
                 {
                   key: '3',
-                  label: 'Kiểm tra phạt nóng',
-                  children: <CheckPunishment />,
+                  label: 'Sự cố giao thông',
+                  children: <Incident />,
                 },
               ]}
             />
