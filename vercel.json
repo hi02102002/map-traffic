@@ -1,6 +1,6 @@
 {
   "rewrites": [
-    { "source": "/1026/:path(.*)", "destination": "https://phatnguoixe.com" },
+    { "source": "/1026", "destination": "https://phatnguoixe.com/1026" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
