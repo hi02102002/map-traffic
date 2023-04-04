@@ -36,10 +36,6 @@ const MapProvider = () => {
         trafficFlow: true,
       },
       pitch: 60,
-      // style:
-      //   'https://api.tomtom.com/style/1/style/21.1.0-*?map=basic_main&traffic_incidents=incidents_' +
-      //   TRAFFIC_INCIDENTS_STYLE +
-      //   '&poi=poi_main',
     });
     map.addControl(new tt.FullscreenControl());
     map.addControl(new tt.NavigationControl());

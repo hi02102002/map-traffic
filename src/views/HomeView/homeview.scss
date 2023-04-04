@@ -53,3 +53,34 @@
   height: 20px;
   width: 20px;
 }
+
+.colors-meaning {
+  position: fixed;
+  right: 100;
+  bottom: 0;
+
+  border: 1px solid black;
+  display: flex;
+
+  .color-road {
+    width: 50px;
+    height: 20px;
+    cursor: pointer;
+  }
+
+  .green {
+    background-color: green;
+  }
+
+  .yellow {
+    background-color: yellow;
+  }
+
+  .orange {
+    background-color: orange;
+  }
+
+  .red {
+    background-color: red;
+  }
+}

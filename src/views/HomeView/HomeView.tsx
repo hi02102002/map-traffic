@@ -1,7 +1,7 @@
 import { DownOutlined } from '@ant-design/icons';
 import tt from '@tomtom-international/web-sdk-maps';
 import tts, { TravelMode } from '@tomtom-international/web-sdk-services';
-import { Col, Form, Row, Select, Space, Tabs } from 'antd';
+import { Col, Form, Row, Select, Space, Tabs, Tooltip } from 'antd';
 import { Option } from 'antd/es/mentions';
 import { useEffect, useState } from 'react';
 import { CheckPunishment } from '~/component';
@@ -111,7 +111,6 @@ const HomeView = () => {
         });
     }
   }, [startPoint, endPoint, map, travel]);
-
   function handeChangeTravel(value: string) {
     setTravel(value);
   }
@@ -183,6 +182,26 @@ const HomeView = () => {
         </Col>
         <Col xs={24} md={16}>
           <div id='map' className='home-view__map' />
+          <div className='colors-meaning' id='colors-meaning'>
+            <Tooltip title='Tốc độ lưu thông trên đường nhanh và không có tắc đường'>
+              <div className='green color-road'></div>
+            </Tooltip>
+            <Tooltip
+              title='Tốc độ lưu thông trên tuyến đường có chút chậm hơn và có một 
+số tắc đường nhẹ.'
+            >
+              <div className='yellow color-road'></div>
+            </Tooltip>
+            <Tooltip title='tốc độ lưu thông trên tuyến đường chậm hơn và có tắc đường.'>
+              <div className='orange color-road'></div>
+            </Tooltip>
+            <Tooltip
+              title=' tốc độ lưu thông trên tuyến đường rất chậm hoặc đường đang bị
+tắc hoàn toàn.'
+            >
+              <div className='red color-road'></div>
+            </Tooltip>
+          </div>
         </Col>
       </Row>
     </div>
