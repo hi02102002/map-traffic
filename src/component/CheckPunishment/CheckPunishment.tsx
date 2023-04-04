@@ -3,7 +3,9 @@ import axios from 'axios';
 import parse from 'html-react-parser';
 import { useRef, useState } from 'react';
 import ReCAPTCHA from 'react-google-recaptcha';
+import Cookies from 'universal-cookie';
 import './CheckPunishment.scss';
+const cookies = new Cookies();
 
 const CheckPunishment = () => {
   const recaptchaRef = useRef<ReCAPTCHA | null>(null);
@@ -18,7 +20,7 @@ const CheckPunishment = () => {
       formData.append('BienSo', values.BienKS);
       formData.append('LoaiXe', values.Xe);
 
-      const res = await axios.post(`https://phatnguoixe.com/1026`, formData, {
+      const res = await axios.post(`/1026`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

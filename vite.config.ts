@@ -5,4 +5,12 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react(), tsconfigPaths()],
+  server: {
+    proxy: {
+      '/1026': {
+        target: 'https://phatnguoixe.com',
+        changeOrigin: true,
+      },
+    },
+  },
 });
