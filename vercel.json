@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    { "source": "/1026", "destination": "https://phatnguoixe.com/1026" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}

@@ -1,7 +1,7 @@
 import { DownOutlined } from '@ant-design/icons';
 import tt from '@tomtom-international/web-sdk-maps';
 import tts, { TravelMode } from '@tomtom-international/web-sdk-services';
-import { Col, Form, Row, Select, Space, Tabs, Typography } from 'antd';
+import { Col, Form, Row, Select, Space, Tabs } from 'antd';
 import { Option } from 'antd/es/mentions';
 import { useEffect, useState } from 'react';
 import { CheckPunishment } from '~/component';
@@ -10,7 +10,7 @@ import { useMap } from '~/context/map.context';
 import useLocation from '~/store/location';
 import { arrIcon } from '../../assets/icon';
 import './homeview.scss';
-const { Title } = Typography;
+import Incident from '~/component/Incident/Incident';
 
 const HomeView = () => {
   const { map, location } = useMap();
@@ -25,8 +25,8 @@ const HomeView = () => {
 
   useEffect(() => {
     const routeOptions = {
-      key: 'xuETmAIdAk4OlsACWCeSf8N0PMv79g6N',
-      locations: [],
+      key: 'ZOGy21WlSKlvwZ8eMPodv71OESuHIerH',
+      locations: [] as any[],
       travelMode: `${travel}` as TravelMode,
     };
 
@@ -66,14 +66,22 @@ const HomeView = () => {
               },
             });
           }
-          console.log(routeData);
 
-          // const startPointofRoute = routeData.routes[0].sections[0].endPointIndex;
           const endPointofRoute = routeData.routes[0].sections[0].startPointIndex;
-          // console.log(endPointofRoute);
+          let longitudeEnd = 0;
+          let latitudeEnd = 0;
+          if (routeData.routes[0].legs[0].points[endPointofRoute + 3].lng) {
+            longitudeEnd = routeData.routes[0].legs[0].points[endPointofRoute + 3].lng!;
+          }
+
+          if (routeData.routes[0].legs[0].points[endPointofRoute + 3].lat) {
+            latitudeEnd = routeData.routes[0].legs[0].points[endPointofRoute + 3].lat!;
+          }
+
+          const endPointOfRouteConvert = new tt.LngLat(longitudeEnd, latitudeEnd);
           new tt.Popup()
             // .setLngLat(routeData.routes[0].legs[0].points[startPointofRoute + 3])
-            .setLngLat(routeData.routes[0].legs[0].points[endPointofRoute + 3])
+            .setLngLat(endPointOfRouteConvert)
             .setHTML(
               '<div class="tt-pop-up-container">' +
                 '<div class="pop-up-content">' +
@@ -163,6 +171,11 @@ const HomeView = () => {
                   key: '2',
                   label: 'Kiểm tra phạt nguội',
                   children: <CheckPunishment />,
+                },
+                {
+                  key: '3',
+                  label: 'Sự cố giao thông',
+                  children: <Incident />,
                 },
               ]}
             />

@@ -1,10 +1,14 @@
 import SuggestionListItem from '../SuggestionListItem';
 import './Suggestion.scss';
 
+interface data {
+  address: string;
+}
+
 interface Props {
   showList: boolean;
   onPressItem: (item: any) => void;
-  data: object[];
+  data: data[];
 }
 
 function Suggestion({ showList, onPressItem, data }: Props) {

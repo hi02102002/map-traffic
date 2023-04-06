@@ -1,0 +1,21 @@
+.incident-list-item {
+  cursor: pointer;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0px;
+  &:hover {
+    opacity: 0.8;
+  }
+
+  .incident-details {
+    display: flex;
+
+    .traffic-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+    }
+  }
+}
